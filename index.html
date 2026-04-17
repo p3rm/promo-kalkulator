@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Promocji Bukmacherskich</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Kalkulator Promocji Bukmacherskich</h1>
+    <p class="subtitle">Oblicz opłacalność freebetów i promocji</p>
+  </header>
+
+  <main>
+
+    <!-- KALKULATOR -->
+    <section class="card" id="calculator-section">
+      <h2>Kalkulator Freebeta</h2>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="freebet-value">Wartość freebeta (PLN)</label>
+          <input type="number" id="freebet-value" min="0" step="0.01" placeholder="np. 50.00" />
+        </div>
+
+        <div class="field">
+          <label for="back-odds">Kurs bukmachera</label>
+          <input type="number" id="back-odds" min="1.01" step="0.01" placeholder="np. 4.00" />
+        </div>
+
+        <div class="field full-width">
+          <label>Typ freebeta</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="btn-snr" data-type="SNR">
+              SNR <span class="hint">— stake nie wraca</span>
+            </button>
+            <button class="toggle-btn" id="btn-sr" data-type="SR">
+              SR <span class="hint">— stake wraca przy wygranej</span>
+            </button>
+          </div>
+          <input type="hidden" id="freebet-type" value="SNR" />
+        </div>
+
+        <div class="divider full-width">
+          <span>Opcjonalnie: hedging na giełdzie (Betfair)</span>
+        </div>
+
+        <div class="field">
+          <label for="lay-odds">Kurs lay (giełda)</label>
+          <input type="number" id="lay-odds" min="1.01" step="0.01" placeholder="np. 4.05" />
+        </div>
+
+        <div class="field">
+          <label for="commission">Prowizja giełdy (%)</label>
+          <input type="number" id="commission" min="0" max="20" step="0.1" value="5" />
+        </div>
+
+      </div>
+
+      <!-- WYNIKI -->
+      <div class="results" id="results">
+        <div class="result-row">
+          <span class="result-label">Oczekiwana wartość (EV)</span>
+          <span class="result-value green" id="res-ev">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Współczynnik konwersji</span>
+          <span class="result-value green" id="res-conv">—</span>
+        </div>
+        <div id="lay-results" class="hidden">
+          <div class="result-divider"></div>
+          <div class="result-row">
+            <span class="result-label">Stawka lay (giełda)</span>
+            <span class="result-value" id="res-lay">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Gwarantowany zysk</span>
+            <span class="result-value green" id="res-profit">—</span>
+          </div>
+        </div>
+        <div id="error-msg" class="error hidden"></div>
+      </div>
+
+      <div class="save-row">
+        <div class="field">
+          <label for="bookmaker-name">Bukmacher (do zapisu)</label>
+          <input type="text" id="bookmaker-name" placeholder="np. Fortuna, STS..." />
+        </div>
+        <button class="btn-save" id="btn-save">+ Zapisz do tabeli</button>
+      </div>
+    </section>
+
+    <!-- TABELA LOGÓW -->
+    <section class="card" id="log-section">
+      <div class="log-header">
+        <h2>Zapisane promocje</h2>
+        <button class="btn-clear" id="btn-clear-all">Wyczyść wszystko</button>
+      </div>
+
+      <div id="log-empty" class="empty-state">
+        Brak zapisanych promocji. Oblicz freebet i kliknij "Zapisz do tabeli".
+      </div>
+
+      <div id="log-table-wrap" class="hidden">
+        <div class="table-scroll">
+          <table id="log-table">
+            <thead>
+              <tr>
+                <th>Bukmacher</th>
+                <th>Data</th>
+                <th>Typ</th>
+                <th>Freebet</th>
+                <th>Kurs</th>
+                <th>EV</th>
+                <th>Konwersja</th>
+                <th>Gwarantowany</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="log-tbody"></tbody>
+            <tfoot id="log-tfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Kalkulacje zakładają kursy fair. EV to wartość statystyczna, nie gwarancja zysku.</p>
+  </footer>
+
+  <script src="calculator.js"></script>
+</body>
+</html>
