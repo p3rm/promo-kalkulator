@@ -4,119 +4,115 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kalkulator Promocji Bukmacherskich</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
 
   <header>
     <h1>Kalkulator Promocji Bukmacherskich</h1>
-    <p class="subtitle">Oblicz opłacalność freebetów i promocji</p>
+    <p class="subtitle">Wybierz bukmachera i typ promocji</p>
   </header>
 
   <main>
 
-    <!-- KALKULATOR -->
-    <section class="card" id="calculator-section">
-      <h2>Kalkulator Freebeta</h2>
-
-      <div class="form-grid">
-
+    <!-- WYBÓR Z DROPDOWNÓW -->
+    <section class="card">
+      <div class="select-row">
         <div class="field">
-          <label for="freebet-value">Wartość freebeta (PLN)</label>
-          <input type="number" id="freebet-value" min="0" step="0.01" placeholder="np. 50.00" />
-        </div>
-
-        <div class="field">
-          <label for="back-odds">Kurs bukmachera</label>
-          <input type="number" id="back-odds" min="1.01" step="0.01" placeholder="np. 4.00" />
-        </div>
-
-        <div class="field full-width">
-          <label>Typ freebeta</label>
-          <div class="toggle-group">
-            <button class="toggle-btn active" id="btn-snr" data-type="SNR">
-              SNR <span class="hint">— stake nie wraca</span>
-            </button>
-            <button class="toggle-btn" id="btn-sr" data-type="SR">
-              SR <span class="hint">— stake wraca przy wygranej</span>
-            </button>
+          <label for="bk-select">Bukmacher *</label>
+          <div class="select-wrap">
+            <select id="bk-select" required>
+              <option value=""></option>
+            </select>
           </div>
-          <input type="hidden" id="freebet-type" value="SNR" />
-        </div>
-
-        <div class="divider full-width">
-          <span>Opcjonalnie: hedging na giełdzie (Betfair)</span>
         </div>
 
         <div class="field">
-          <label for="lay-odds">Kurs lay (giełda)</label>
-          <input type="number" id="lay-odds" min="1.01" step="0.01" placeholder="np. 4.05" />
+          <label for="promo-select">Typ promocji *</label>
+          <select id="promo-select" required>
+            <option value=""></option>
+          </select>
         </div>
-
-        <div class="field">
-          <label for="commission">Prowizja giełdy (%)</label>
-          <input type="number" id="commission" min="0" max="20" step="0.1" value="5" />
-        </div>
-
       </div>
+    </section>
 
-      <!-- WYNIKI -->
-      <div class="results" id="results">
+    <!-- DYNAMICZNE POLA + WYNIKI -->
+    <section class="card hidden" id="details-section">
+      <h2 id="details-title">Szczegóły promocji</h2>
+
+      <div class="form-grid" id="form-fields"></div>
+
+      <h3 class="section-title">Sugerowane strategie</h3>
+      <ul class="tips" id="tips-list">
+        <!-- Strategia kuponu kwalifikującego -->
+        <li data-tip="coupon-low-default">Kupon kwalifikacyjny — grać <strong>najmniejszym możliwym kursem</strong></li>
+        <li data-tip="coupon-low-win">Kupon kwalifikacyjny — grać <strong>najmniejszym możliwym kursem</strong>. Im niższy kurs, tym większa szansa wygranej → częściej dostajesz freebet</li>
+        <li data-tip="lose-limit-solo">Solo — grać <strong>kurs 4+</strong>, im wyższy tym lepszy zysk (np. 6 = +25%)</li>
+        <li data-tip="lose-limit-ako2">Ako2 — celuj w łączny kurs <strong>10+</strong> (zysk +20-22%)</li>
+        <li data-tip="lose-limit-ako3">⚠️ <strong>Ako3+ nie grać</strong> — strata kuponu rośnie szybciej niż zysk z freebeta</li>
+
+        <!-- Strategia kuponu bonusowego -->
+        <li data-tip="snr">Kupon bonusowy — najlepiej grać <strong>kurs 4-6</strong>, bo bukmacher zabiera stawkę freebeta przy wygranej</li>
+        <li data-tip="sr">Kupon bonusowy — <strong>kurs dowolny</strong> (EV nie zależy od kursu, stawka freebeta wraca)</li>
+
+        <!-- Zawsze -->
+        <li data-tip="always">Potencjalny zysk możesz zwiększyć grając <strong>zboostowane kursy</strong> u bukmachera</li>
+      </ul>
+
+      <h3 class="section-title">Profit</h3>
+      <div class="results">
         <div class="result-row">
-          <span class="result-label">Oczekiwana wartość (EV)</span>
+          <span class="result-label">EV freebeta</span>
           <span class="result-value green" id="res-ev">—</span>
         </div>
         <div class="result-row">
-          <span class="result-label">Współczynnik konwersji</span>
-          <span class="result-value green" id="res-conv">—</span>
+          <span class="result-label">Strata na kwalifikacji</span>
+          <span class="result-value red" id="res-qual-loss">—</span>
         </div>
-        <div id="lay-results" class="hidden">
-          <div class="result-divider"></div>
-          <div class="result-row">
-            <span class="result-label">Stawka lay (giełda)</span>
-            <span class="result-value" id="res-lay">—</span>
-          </div>
-          <div class="result-row">
-            <span class="result-label">Gwarantowany zysk</span>
-            <span class="result-value green" id="res-profit">—</span>
-          </div>
+        <div class="result-divider"></div>
+        <div class="result-row">
+          <span class="result-label result-label-big">Zysk netto</span>
+          <span class="result-value result-value-big green" id="res-net">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">% zwrotu z kwalifikacji</span>
+          <span class="result-value green" id="res-pct">—</span>
         </div>
         <div id="error-msg" class="error hidden"></div>
       </div>
 
+      <div class="recalc-row hidden" id="recalc-row">
+        <button class="btn-recalc" id="btn-recalc">↻ Przelicz ponownie</button>
+      </div>
+
       <div class="save-row">
-        <div class="field">
-          <label for="bookmaker-name">Bukmacher (do zapisu)</label>
-          <input type="text" id="bookmaker-name" placeholder="np. Fortuna, STS..." />
-        </div>
         <button class="btn-save" id="btn-save">+ Zapisz do tabeli</button>
       </div>
     </section>
 
     <!-- TABELA LOGÓW -->
-    <section class="card" id="log-section">
+    <section class="card">
       <div class="log-header">
         <h2>Zapisane promocje</h2>
         <button class="btn-clear" id="btn-clear-all">Wyczyść wszystko</button>
       </div>
 
       <div id="log-empty" class="empty-state">
-        Brak zapisanych promocji. Oblicz freebet i kliknij "Zapisz do tabeli".
+        Brak zapisanych promocji.
       </div>
 
       <div id="log-table-wrap" class="hidden">
         <div class="table-scroll">
-          <table id="log-table">
+          <table>
             <thead>
               <tr>
                 <th>Bukmacher</th>
                 <th>Data</th>
                 <th>Typ</th>
-                <th>Freebet</th>
+                <th>Kwota</th>
                 <th>Kurs</th>
-                <th>EV</th>
-                <th>Konwersja</th>
-                <th>Gwarantowany</th>
+                <th>Zysk netto</th>
+                <th>% zwrotu</th>
                 <th></th>
               </tr>
             </thead>
@@ -130,9 +126,9 @@
   </main>
 
   <footer>
-    <p>Kalkulacje zakładają kursy fair. EV to wartość statystyczna, nie gwarancja zysku.</p>
+    <p>EV to wartość statystyczna — nie gwarancja zysku.</p>
   </footer>
 
-  <script src="calculator.js"></script>
+  <script src="calculator.js?v=11"></script>
 </body>
 </html>
