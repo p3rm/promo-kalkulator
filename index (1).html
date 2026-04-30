@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Opłacalności Promocji Bukmacherskich</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Kalkulator <span style="color:var(--accent)">Opłacalności</span> Promocji Bukmacherskich</h1>
+        <p class="subtitle">Wklej regulamin promocji, a następnie kliknij Sprawdź opłacalność. System automatycznie przeliczy opłacalność wstawionej promocji.</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-api-key" id="api-key-btn" title="Klucz API Groq">⚙ Klucz API</button>
+      </div>
+    </div>
+    <div class="api-key-modal hidden" id="api-key-modal">
+      <div class="api-key-modal-inner">
+        <label for="api-key-input">Klucz Groq API (<a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a> → Create API key)</label>
+        <div class="api-key-row">
+          <input type="password" id="api-key-input" placeholder="gsk_..." autocomplete="off" />
+          <button id="save-api-key">Zapisz</button>
+        </div>
+        <p class="api-key-hint">Klucz zapisywany lokalnie w przeglądarce. Darmowy tier: 14 400 req/dzień.</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- WYBÓR BUKMACHERA + REGULAMIN -->
+    <section class="card" id="input-card">
+      <div class="field">
+        <label for="bk-select">Bukmacher *</label>
+        <div class="select-wrap">
+          <select id="bk-select" required>
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field regulamin-field">
+        <label for="regulamin-input">Regulamin promocji *</label>
+        <textarea id="regulamin-input"
+          placeholder="Wklej tutaj treść regulaminu lub opis promocji...&#10;&#10;Np.: &quot;Otrzymaj freebet 50 zł za kupon AKO2+ na kurs min. 3.00. Freebet przyznawany po przegranej.&quot;"></textarea>
+      </div>
+
+      <div class="parse-row">
+        <button class="btn-parse" id="parse-btn" disabled>Sprawdź opłacalność</button>
+        <div class="parse-status hidden" id="parse-status"></div>
+      </div>
+    </section>
+
+    <!-- WYNIKI AI -->
+    <section class="card hidden" id="results-card">
+
+      <div class="ev-hero">
+        <span class="ev-label">Oczekiwany zwrot</span>
+        <span class="ev-tooltip-wrap" data-tooltip="" id="ev-tooltip-wrap">
+          <span class="ev-value" id="ev-result">—</span>
+          <span class="ev-info-icon">i</span>
+        </span>
+        <span class="promo-condition-label" id="promo-condition-label"></span>
+        <div class="promo-type-row">
+          <span class="promo-type-badge" id="promo-type-label"></span>
+        </div>
+      </div>
+
+      <div class="promo-summary">
+        <div id="promo-details-container"></div>
+        <p class="ai-notes hidden" id="ai-notes"></p>
+      </div>
+
+      <div class="back-row">
+        <button class="btn-back" id="btn-back">← Zmień warunki</button>
+        <span class="disclaimer">EV to wartość statystyczna — nie gwarancja zysku.</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>EV to wartość statystyczna — nie gwarancja zysku.</p>
+  </footer>
+
+  <script src="calculator.js"></script>
+</body>
+</html>
