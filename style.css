@@ -1,18 +1,18 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f1117;
-  --surface: #1a1d27;
-  --surface2: #222636;
-  --border: #2e3347;
-  --text: #e4e6f0;
-  --text-muted: #7c82a0;
-  --green: #00c87a;
-  --green-dim: #00c87a22;
+  --bg: #0a0c10;
+  --surface: #13161f;
+  --surface2: #1c2030;
+  --border: #252a3a;
+  --text: #e8eaf4;
+  --text-muted: #6b7290;
+  --green: #00e676;
+  --green-dim: #00e67618;
   --red: #ff5f57;
   --red-dim: #ff5f5722;
-  --accent: #4f8ef7;
-  --accent-dim: #4f8ef722;
+  --accent: #00d4ff;
+  --accent-dim: #00d4ff18;
   --warn: #FFB020;
   --warn-dim: #FFB02018;
   --radius: 12px;
@@ -32,6 +32,8 @@ header {
   padding: 36px 20px 0;
   max-width: 860px;
   margin: 0 auto;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
 }
 
 .header-inner {
@@ -43,9 +45,9 @@ header {
 }
 
 header h1 {
-  font-size: clamp(1.3rem, 4vw, 2rem);
+  font-size: clamp(1.1rem, 3vw, 1.55rem);
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
   color: #fff;
 }
 
@@ -180,7 +182,7 @@ select:focus { border-color: var(--accent); }
   transition: border-color 0.15s;
 }
 #regulamin-input:focus { border-color: var(--accent); }
-#regulamin-input::placeholder { color: #484e66; }
+#regulamin-input::placeholder { color: #5a6180; }
 
 /* ── PARSE ROW ── */
 .parse-row {
@@ -193,13 +195,15 @@ select:focus { border-color: var(--accent); }
 .btn-parse {
   background: var(--green);
   border: none;
-  border-radius: 8px;
-  color: #0f1117;
+  border-radius: 12px;
+  color: #080a0d;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 700;
   padding: 12px 32px;
+  letter-spacing: 0.01em;
   transition: opacity 0.15s;
+  width: 100%;
 }
 .btn-parse:hover:not(:disabled) { opacity: 0.87; }
 .btn-parse:disabled { opacity: 0.35; cursor: not-allowed; }
@@ -215,16 +219,17 @@ select:focus { border-color: var(--accent); }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 8px 0 20px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .ev-label {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -288,31 +293,15 @@ select:focus { border-color: var(--accent); }
   opacity: 0.7;
 }
 
-/* Badge + warunek — bezpośrednio pod % w ev-hero */
-.promo-type-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+/* Badge ukryty, warunek widoczny pod EV */
+.promo-type-row { display: none; }
 
-.promo-type-badge {
-  display: inline-block;
-  background: var(--accent);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-}
+.promo-type-badge { display: none; }
 
 .promo-condition-label {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  font-weight: 500;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 /* ── PROMO SUMMARY ── */
@@ -360,10 +349,10 @@ select:focus { border-color: var(--accent); }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--text);
+  color: var(--accent);
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent);
+  border-bottom: 1px solid var(--border);
 }
 
 .promo-block ul,
@@ -401,6 +390,10 @@ select:focus { border-color: var(--accent); }
   margin-top: 20px;
   border-top: 1px solid var(--border);
   padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 .btn-back {
   background: none;
@@ -414,10 +407,15 @@ select:focus { border-color: var(--accent); }
 }
 .btn-back:hover { border-color: var(--accent); color: var(--accent); }
 
-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px; }
+footer { display: none; }
+
+#results-card {
+  border-left: 3px solid var(--accent);
+}
+
+.disclaimer { font-size: 0.78rem; color: var(--text-muted); opacity: 0.5; }
 .hidden { display: none !important; }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 560px) {
   .header-inner { flex-direction: column; }
   .card { padding: 20px 16px; }
