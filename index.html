@@ -3,124 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kalkulator Promocji Bukmacherskich</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <title>Kalkulator Opłacalności Promocji Bukmacherskich</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header>
-    <h1>Kalkulator Promocji Bukmacherskich</h1>
-    <p class="subtitle">Wybierz bukmachera i typ promocji</p>
+    <div class="header-inner">
+      <div>
+        <h1>Kalkulator Opłacalności Promocji Bukmacherskich</h1>
+        <p class="subtitle">Wklej regulamin promocji, a następnie kliknij Sprawdź opłacalność. System automatycznie przeliczy opłacalność wstawionej promocji.</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-api-key" id="api-key-btn" title="Klucz API Groq">⚙ Klucz API</button>
+      </div>
+    </div>
+    <div class="api-key-modal hidden" id="api-key-modal">
+      <div class="api-key-modal-inner">
+        <label for="api-key-input">Klucz Groq API (<a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a> → Create API key)</label>
+        <div class="api-key-row">
+          <input type="password" id="api-key-input" placeholder="gsk_..." autocomplete="off" />
+          <button id="save-api-key">Zapisz</button>
+        </div>
+        <p class="api-key-hint">Klucz zapisywany lokalnie w przeglądarce. Darmowy tier: 14 400 req/dzień.</p>
+      </div>
+    </div>
   </header>
 
   <main>
 
-    <!-- WYBÓR Z DROPDOWNÓW -->
-    <section class="card">
-      <div class="select-row">
-        <div class="field">
-          <label for="bk-select">Bukmacher *</label>
-          <div class="select-wrap">
-            <select id="bk-select" required>
-              <option value=""></option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="promo-select">Typ promocji *</label>
-          <select id="promo-select" required>
+    <!-- WYBÓR BUKMACHERA + REGULAMIN -->
+    <section class="card" id="input-card">
+      <div class="field">
+        <label for="bk-select">Bukmacher *</label>
+        <div class="select-wrap">
+          <select id="bk-select" required>
             <option value=""></option>
           </select>
         </div>
       </div>
-    </section>
 
-    <!-- DYNAMICZNE POLA + WYNIKI -->
-    <section class="card hidden" id="details-section">
-      <h2 id="details-title">Szczegóły promocji</h2>
-
-      <div class="form-grid" id="form-fields"></div>
-
-      <h3 class="section-title">Sugerowane strategie</h3>
-      <ul class="tips" id="tips-list">
-        <!-- Strategia kuponu kwalifikującego -->
-        <li data-tip="coupon-low-default">Kupon kwalifikacyjny — grać <strong>najmniejszym możliwym kursem</strong></li>
-        <li data-tip="coupon-low-win">Kupon kwalifikacyjny — grać <strong>najmniejszym możliwym kursem</strong>. Im niższy kurs, tym większa szansa wygranej → częściej dostajesz freebet</li>
-        <li data-tip="lose-limit-solo">Solo — grać <strong>kurs 4+</strong>, im wyższy tym lepszy zysk (np. 6 = +25%)</li>
-        <li data-tip="lose-limit-ako2">Ako2 — celuj w łączny kurs <strong>10+</strong> (zysk +20-22%)</li>
-        <li data-tip="lose-limit-ako3">⚠️ <strong>Ako3+ nie grać</strong> — strata kuponu rośnie szybciej niż zysk z freebeta</li>
-
-        <!-- Strategia kuponu bonusowego -->
-        <li data-tip="snr">Kupon bonusowy — najlepiej grać <strong>kurs 4-6</strong>, bo bukmacher zabiera stawkę freebeta przy wygranej</li>
-        <li data-tip="sr">Kupon bonusowy — <strong>kurs dowolny</strong> (EV nie zależy od kursu, stawka freebeta wraca)</li>
-
-        <!-- Zawsze -->
-        <li data-tip="always">Potencjalny zysk możesz zwiększyć grając <strong>zboostowane kursy</strong> u bukmachera</li>
-      </ul>
-
-      <h3 class="section-title">Profit</h3>
-      <div class="results">
-        <div class="result-row">
-          <span class="result-label">EV freebeta</span>
-          <span class="result-value green" id="res-ev">—</span>
-        </div>
-        <div class="result-row">
-          <span class="result-label">Strata na kwalifikacji</span>
-          <span class="result-value red" id="res-qual-loss">—</span>
-        </div>
-        <div class="result-divider"></div>
-        <div class="result-row">
-          <span class="result-label result-label-big">Zysk netto</span>
-          <span class="result-value result-value-big green" id="res-net">—</span>
-        </div>
-        <div class="result-row">
-          <span class="result-label">% zwrotu z kwalifikacji</span>
-          <span class="result-value green" id="res-pct">—</span>
-        </div>
-        <div id="error-msg" class="error hidden"></div>
+      <div class="field regulamin-field">
+        <label for="regulamin-input">Regulamin promocji *</label>
+        <textarea id="regulamin-input"
+          placeholder="Wklej tutaj treść regulaminu lub opis promocji...&#10;&#10;Np.: &quot;Otrzymaj freebet 50 zł za kupon AKO2+ na kurs min. 3.00. Freebet przyznawany po przegranej.&quot;"></textarea>
       </div>
 
-      <div class="recalc-row hidden" id="recalc-row">
-        <button class="btn-recalc" id="btn-recalc">↻ Przelicz ponownie</button>
-      </div>
-
-      <div class="save-row">
-        <button class="btn-save" id="btn-save">+ Zapisz do tabeli</button>
+      <div class="parse-row">
+        <button class="btn-parse" id="parse-btn" disabled>Sprawdź opłacalność</button>
+        <div class="parse-status hidden" id="parse-status"></div>
       </div>
     </section>
 
-    <!-- TABELA LOGÓW -->
-    <section class="card">
-      <div class="log-header">
-        <h2>Zapisane promocje</h2>
-        <button class="btn-clear" id="btn-clear-all">Wyczyść wszystko</button>
-      </div>
+    <!-- WYNIKI AI -->
+    <section class="card hidden" id="results-card">
 
-      <div id="log-empty" class="empty-state">
-        Brak zapisanych promocji.
-      </div>
-
-      <div id="log-table-wrap" class="hidden">
-        <div class="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Bukmacher</th>
-                <th>Data</th>
-                <th>Typ</th>
-                <th>Kwota</th>
-                <th>Kurs</th>
-                <th>Zysk netto</th>
-                <th>% zwrotu</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="log-tbody"></tbody>
-            <tfoot id="log-tfoot"></tfoot>
-          </table>
+      <div class="ev-hero">
+        <span class="ev-label">Oczekiwany zwrot</span>
+        <span class="ev-tooltip-wrap" data-tooltip="" id="ev-tooltip-wrap">
+          <span class="ev-value" id="ev-result">—</span>
+          <span class="ev-info-icon">i</span>
+        </span>
+        <div class="promo-type-row">
+          <span class="promo-type-badge" id="promo-type-label"></span>
+          <span class="promo-condition-label" id="promo-condition-label"></span>
         </div>
       </div>
+
+      <div class="promo-summary">
+        <div id="promo-details-container"></div>
+        <p class="ai-notes hidden" id="ai-notes"></p>
+      </div>
+
+      <div class="back-row">
+        <button class="btn-back" id="btn-back">← Zmień warunki</button>
+      </div>
+
     </section>
 
   </main>
@@ -129,6 +87,6 @@
     <p>EV to wartość statystyczna — nie gwarancja zysku.</p>
   </footer>
 
-  <script src="calculator.js?v=11"></script>
+  <script src="calculator.js"></script>
 </body>
 </html>
